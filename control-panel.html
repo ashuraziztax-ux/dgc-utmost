@@ -1469,7 +1469,9 @@ body.locked{overflow:hidden}
 .gx-wrap{overflow-x:auto}
 .gx{position:relative;min-width:820px}
 .gx-months{display:flex;margin-left:210px;border-bottom:1px solid var(--border)}
-.gx-month{font-size:10px;color:var(--muted);border-left:1px solid var(--border);padding:3px 6px;box-sizing:border-box;text-transform:uppercase;letter-spacing:.04em}
+.gx-month{font-size:10px;color:var(--muted);border-left:1px solid var(--border);padding:3px 6px;box-sizing:border-box;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden}
+.afp-detail td{background:var(--surface2)!important;font-size:11.5px;padding:10px 14px!important;line-height:1.7}
+.afp-tog{cursor:pointer;user-select:none;color:var(--accent)}
 .gx-row{display:grid;grid-template-columns:210px 1fr;border-top:1px solid var(--border);align-items:center}
 .gx-lbl{font-size:11px;padding:6px 8px 6px 0}.gx-lbl .d{font-size:10px;color:var(--muted)}
 .gx-track{position:relative;height:30px}
@@ -1552,7 +1554,7 @@ body.locked{overflow:hidden}
     <div class="ph-card">
       <div class="ph-title">AFP schedule — actual vs planned at each valuation</div>
       <table class="ph-table" id="payTbl"></table>
-      <div style="font-size:11px;color:var(--muted);margin-top:8px">At each AFP: <b>Planned</b> = where the programme says we should be by that date · <b>Actual</b> = your % complete + what's certified. Variance shows ahead (green) / behind (red). Tick an AFP when applied.</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px">At each AFP: <b>Planned</b> = where the programme says we should be by that date · <b>Actual</b> = your % complete + what's certified. Variance shows ahead (green) / behind (red). Tick an AFP when applied. <b>Click an AFP name (▸) to expand its materials / DGC-works / profit split.</b></div>
     </div>
     <div class="ph-card">
       <div class="ph-title">Retention — tapered <span class="chip risk">provisional</span></div>
@@ -1634,6 +1636,7 @@ const defClient={contractValue:399692.76,startDate:"2026-08-31",baseStart:"2026-
   {n:"Step down at +6 months",when:"~Jun 2027",pct:"2.5%",amount:9992.32,released:false},
   {n:"Final release end of DLP",when:"~Dec 2027",pct:"0%",amount:9992.32,released:false}]};
 const defInt={boq:[["Disposal installations (gully PS)",2500.00],["Roads, paths, pavings & surfacings",361280.12],["Main contractor's cost items (prelims)",31237.64],["Consultants' fees — Structura SE drainage design",4675.00]],
+ matTotal:229020, matPhasing:[0.20,0.40,0.40,0.00], profFactor:0.0909,
  ohp:10,cost:363356,profit:36337,margin:9.09,gang:"~4 operatives + supervision",
  suppliers:[["CETCO / Kestrel","Waterproofing membrane (Hydrofix 600 + Aquadrain), ~£229k value; DGC pays upfront — credit facility being sought"],
   ["Structura (Greg Kerwick)","SE drainage design, 10-yr PI (Contractor's Designed Portion)"],
@@ -1668,6 +1671,8 @@ function showTab(n,btn){document.querySelectorAll('.tab-content').forEach(t=>t.c
 window.showTab=showTab;
 function toggleClient(){location.search=isClient?'':'?view=client';}
 window.toggleClient=toggleClient;
+function tglAfp(i){const r=$('afpd'+i),t=$('afpt'+i);if(!r)return;const open=r.style.display==='none';r.style.display=open?'table-row':'none';if(t)t.textContent=(open?'▾ ':'▸ ')+S.afps[i].n;}
+window.tglAfp=tglAfp;
 
 function render(){
   $('todayBadge').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -1686,7 +1691,13 @@ function render(){
   $('payKpis').innerHTML=kpi(gbp0(359723.49),'Payable over works')+kpi(gbp0(39969.28),'Retention (10%)')+kpi(np?gbp0(np.net):'—','Next AFP net')+kpi(gbp0(S.contractValue),'Contract total');
   $('payTbl').innerHTML=`<thead><tr><th>AFP</th><th>Date</th><th style="text-align:right">Planned %</th><th style="text-align:right">Actual %</th><th style="text-align:right">Var</th><th style="text-align:right">Certified</th><th style="text-align:right">Net</th><th>Status</th></tr></thead><tbody>`+
    S.afps.map((a,i)=>{const dt=shift(a.date),pp=plannedPctAt(dt),ap=a.applied?opct():null;const vv=a.applied?opct()-pp:null;
-    return `<tr><td>${a.n}</td><td>${fmt(dt)}</td><td style="text-align:right">${pp}%</td><td style="text-align:right">${ap===null?'—':ap+'%'}</td><td style="text-align:right">${vv===null?'—':`<span class="${vv>=0?'varpos':'varneg'}">${vv>=0?'+':''}${vv}%</span>`}</td><td style="text-align:right">${gbp(a.certified)}</td><td style="text-align:right"><b>${gbp(a.net)}</b></td><td>${isClient?`<span class="ph-badge ${a.applied?'ph-green':'ph-amber'}">${a.applied?'Applied':'Due'}</span>`:`<label class="ph-badge ${a.applied?'ph-green':'ph-amber'}"><input type="checkbox" ${a.applied?'checked':''} data-a="${i}"> ${a.applied?'Applied':'Due'}</label>`}</td></tr>`}).join('')+
+    let row=`<tr><td>${isClient?a.n:`<span class="afp-tog" onclick="tglAfp(${i})" id="afpt${i}">▸ ${a.n}</span>`}</td><td>${fmt(dt)}</td><td style="text-align:right">${pp}%</td><td style="text-align:right">${ap===null?'—':ap+'%'}</td><td style="text-align:right">${vv===null?'—':`<span class="${vv>=0?'varpos':'varneg'}">${vv>=0?'+':''}${vv}%</span>`}</td><td style="text-align:right">${gbp(a.certified)}</td><td style="text-align:right"><b>${gbp(a.net)}</b></td><td>${isClient?`<span class="ph-badge ${a.applied?'ph-green':'ph-amber'}">${a.applied?'Applied':'Due'}</span>`:`<label class="ph-badge ${a.applied?'ph-green':'ph-amber'}"><input type="checkbox" ${a.applied?'checked':''} data-a="${i}"> ${a.applied?'Applied':'Due'}</label>`}</td></tr>`;
+    if(!isClient){const mat=I.matTotal*(I.matPhasing[i]||0),works=a.certified-mat,prof=a.certified*I.profFactor;
+     row+=`<tr class="afp-detail" id="afpd${i}" style="display:none"><td colspan="8"><b>Where ${a.n}'s ${gbp(a.certified)} comes from</b><br>`+
+      `&nbsp;• CETCO membrane materials (Kestrel supply, claimed ${Math.round((I.matPhasing[i]||0)*100)}% of the £229,020): <b>${gbp(mat)}</b><br>`+
+      `&nbsp;• DGC works — fix labour + paving + demolition + prelims + disposal + lead: <b>${gbp(works)}</b><br>`+
+      `&nbsp;• of which profit: <b>≈${gbp(prof)}</b> &nbsp;<span style="color:var(--accent)">⚠ assumption — ~9.09% OH&P is baked into Simon's rates; a true figure needs the membrane cost-vs-sell from Simon</span></td></tr>`;}
+    return row;}).join('')+
    `</tbody><tfoot><tr style="font-weight:800"><td colspan="5">Total</td><td style="text-align:right">${gbp(399692.76)}</td><td style="text-align:right">${gbp(359723.49)}</td><td></td></tr></tfoot>`;
   if(!isClient)document.querySelectorAll('#payTbl input').forEach(el=>el.onchange=e=>{S.afps[+e.target.dataset.a].applied=e.target.checked;render();queue();});
   $('retTbl').innerHTML=`<thead><tr><th>Stage</th><th>When</th><th>Held</th><th style="text-align:right">Amount</th><th>Status</th></tr></thead><tbody>`+
@@ -1704,10 +1715,12 @@ function kpi(v,l){return `<div class="ph-kpi"><div class="k-val">${v}</div><div 
 
 function buildGantt(){
   const g=$('gantt');if(!g)return;
-  const st=shift(S.baseStart),en=shift(S.baseEnd),span=Math.max(1,(en-st)/dMs);
-  let months=[],c=new Date(st.getFullYear(),st.getMonth(),1);
-  while(c<=en){const mEnd=new Date(c.getFullYear(),c.getMonth()+1,1);const a=Math.max(st,c),b=Math.min(en,mEnd);months.push({label:c.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}),w:(b-a)/dMs/span*100});c=mEnd;}
-  const pos=d=>(d-st)/dMs/span*100;
+  const st=shift(S.baseStart),en=shift(S.baseEnd);
+  const axisStart=new Date(st.getFullYear(),st.getMonth(),1);   // origin = 1st of start month → full-width month cells, no sliver
+  const span=Math.max(1,(en-axisStart)/dMs);
+  const pos=d=>(d-axisStart)/dMs/span*100;
+  let months=[],c=new Date(axisStart);
+  while(c<=en){const mEnd=new Date(c.getFullYear(),c.getMonth()+1,1);const b=Math.min(en,mEnd);months.push({label:c.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}),w:(b-c)/dMs/span*100});c=mEnd;}
   const today=new Date(),tPos=pos(today);
   let html=`<div class="gx-months">`+months.map(m=>`<div class="gx-month" style="width:${m.w}%">${m.label}</div>`).join('')+`</div>`;
   html+=S.phases.map(p=>{const ps=shift(p.s),pe=shift(p.e),l=pos(ps),w=Math.max(1.5,pos(pe)-l);const col=+p.pct>=100?'#16a34a':+p.pct>0?'#d97706':'#3b82f6';
