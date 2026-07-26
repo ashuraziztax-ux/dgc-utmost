@@ -22,7 +22,9 @@ header.mast{display:flex;align-items:center;gap:12px;padding:16px;background:lin
 .card h2{font-size:14px;margin:0 0 10px}
 .bar-wrap{background:var(--surface2);border-radius:8px;height:9px;overflow:hidden;margin-top:6px}
 .bar{height:100%;background:linear-gradient(90deg,var(--accent),#fbbf24)}
-.gantt{overflow-x:auto}.gt-row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;padding:5px 0;border-top:1px solid var(--border)}.gt-row:first-child{border-top:none}
+.gantt{overflow-x:auto}.gt-inner{min-width:520px}.gt-months{display:flex;margin-left:150px;border-bottom:1px solid var(--border);margin-bottom:4px}.gt-month{font-size:9.5px;color:var(--muted);border-left:1px solid var(--border);padding:2px 5px;box-sizing:border-box;text-transform:uppercase}
+.gt-row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;padding:5px 0;border-top:1px solid var(--border)}.gt-row:first-child{border-top:none}
+.gt-today{position:absolute;top:0;bottom:0;width:2px;background:#f87171;z-index:4}
 .gt-name{font-size:12px}.gt-name .d{font-size:10.5px;color:var(--muted)}
 .gt-track{position:relative;height:20px;background:var(--surface2);border-radius:6px;min-width:280px}
 .gt-bar{position:absolute;top:2px;height:16px;border-radius:5px;background:var(--accent2);opacity:.85}
@@ -81,8 +83,12 @@ function render(){
    <div class="kpi"><div class="lab">Next payment</div><div class="val">${np?gbp0(np.net):'—'}</div><div class="meta">${np?np.n+' · '+fmt(shift(np.date)):'complete'}</div></div>
    <div class="kpi"><div class="lab">Days to completion</div><div class="val">${dtd()}</div><div class="meta">PC ${fmt(shift(S.baseEnd))}</div></div>`;
   const st=shift(S.baseStart),en=shift(S.baseEnd),sp=Math.max(1,(en-st)/dayMs);
-  document.getElementById('gantt').innerHTML=S.phases.map(p=>{const ps=shift(p.s),pe=shift(p.e),l=Math.max(0,(ps-st)/dayMs/sp*100),w=Math.max(2,(pe-ps)/dayMs/sp*100);
-    return `<div class="gt-row"><div class="gt-name">${p.n}<div class="d">${fmt(ps)} – ${fmt(pe)}</div></div><div class="gt-track"><div class="gt-bar" style="left:${l}%;width:${w}%"><div class="fill" style="width:${p.pct}%"></div><span>${p.pct}%</span></div></div></div>`}).join('');
+  let months=[],c=new Date(st.getFullYear(),st.getMonth(),1);
+  while(c<=en){const mEnd=new Date(c.getFullYear(),c.getMonth()+1,1),a=Math.max(st,c),b=Math.min(en,mEnd);months.push({label:c.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}),w:(b-a)/dayMs/sp*100});c=mEnd;}
+  const tPos=(new Date()-st)/dayMs/sp*100;
+  document.getElementById('gantt').innerHTML=`<div class="gt-inner"><div class="gt-months">`+months.map(m=>`<div class="gt-month" style="width:${m.w}%">${m.label}</div>`).join('')+`</div>`+
+    S.phases.map(p=>{const ps=shift(p.s),pe=shift(p.e),l=Math.max(0,(ps-st)/dayMs/sp*100),w=Math.max(2,(pe-ps)/dayMs/sp*100);
+    return `<div class="gt-row"><div class="gt-name">${p.n}<div class="d">${fmt(ps)} – ${fmt(pe)}</div></div><div class="gt-track">${tPos>=0&&tPos<=100?`<div class="gt-today" style="left:${tPos}%"></div>`:''}<div class="gt-bar" style="left:${l}%;width:${w}%"><div class="fill" style="width:${p.pct}%"></div><span>${p.pct}%</span></div></div></div>`}).join('')+`</div>`;
   document.getElementById('phases').innerHTML=S.phases.map(p=>`<div class="phase"><div class="top"><span>${p.n}</span><span>${p.pct}%</span></div><div class="dt">${fmt(shift(p.s))} – ${fmt(shift(p.e))}</div><div class="bar-wrap"><div class="bar" style="width:${p.pct}%"></div></div></div>`).join('');
   document.getElementById('payTbl').innerHTML=`<thead><tr><th>Application</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead><tbody>`+
     S.afps.map(a=>`<tr><td>${a.n}</td><td>${fmt(shift(a.date))}</td><td>${gbp(a.net)}</td><td class="${a.applied?'paid':'due'}">${a.applied?'Applied':'Due'}</td></tr>`).join('')+`</tbody>`;
