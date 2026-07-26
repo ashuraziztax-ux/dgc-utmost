@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DGC — Utmost KEBH | Job Control Panel</title>
+<style>
+:root{
+  --bg:#0f172a; --surface:#1a1d27; --surface2:#2e3347; --border:#2e3347;
+  --accent:#f59e0b; --accent2:#38bdf8; --green:#22c55e; --red:#ef4444; --orange:#f97316;
+  --text:#e2e8f0; --muted:#94a3b8; --font:'Segoe UI',system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%}
+a{color:var(--accent2)}
+.wrap{max-width:820px;margin:0 auto;padding:14px}
+header.mast{display:flex;align-items:center;gap:12px;padding:14px;background:linear-gradient(135deg,#111827,#1e293b);border:1px solid var(--border);border-radius:14px;margin-bottom:14px}
+.logo{width:44px;height:44px;border-radius:11px;background:var(--accent);color:#111827;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:0 0 auto}
+.mast h1{font-size:17px;margin:0;line-height:1.2}
+.mast .sub{font-size:12.5px;color:var(--muted)}
+.badge{margin-left:auto;font-size:11px;font-weight:700;padding:4px 9px;border-radius:20px;background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.35);white-space:nowrap}
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 13px}
+.kpi .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.kpi .val{font-size:22px;font-weight:800;margin-top:3px}
+.kpi .val small{font-size:12px;color:var(--muted);font-weight:600}
+.kpi.acc .val{color:var(--accent)}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
+.card h2{font-size:14px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h2 .em{font-size:16px}
+.meta{font-size:12.5px;color:var(--muted)}
+.meta b{color:var(--text)}
+.bar-wrap{background:var(--surface2);border-radius:8px;height:9px;overflow:hidden;margin-top:6px}
+.bar{height:100%;background:linear-gradient(90deg,var(--accent),#fbbf24)}
+/* gantt */
+.gantt{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.gt-row{display:grid;grid-template-columns:150px 1fr;gap:8px;align-items:center;padding:5px 0;border-top:1px solid var(--border)}
+.gt-row:first-child{border-top:none}
+.gt-name{font-size:12px}
+.gt-name .d{font-size:10.5px;color:var(--muted)}
+.gt-track{position:relative;height:20px;background:var(--surface2);border-radius:6px;min-width:280px}
+.gt-bar{position:absolute;top:2px;height:16px;border-radius:5px;background:var(--accent2);opacity:.85;display:flex;align-items:center;overflow:hidden}
+.gt-bar .fill{height:100%;background:var(--green);border-radius:5px 0 0 5px}
+.gt-bar span{position:absolute;left:5px;font-size:9.5px;color:#001018;font-weight:700}
+.phase{border:1px solid var(--border);border-radius:11px;padding:10px;margin-bottom:9px}
+.phase .top{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:600}
+.phase .dt{font-size:11.5px;color:var(--muted);margin-top:2px}
+.pct-in{width:58px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:7px;padding:3px 6px;font-size:12px;text-align:right}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:right;padding:7px 6px;border-bottom:1px solid var(--border)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+tfoot td{font-weight:800;border-top:2px solid var(--border);border-bottom:none}
+.paid{color:var(--green)} .due{color:var(--accent)}
+.tag{display:inline-block;font-size:10.5px;padding:2px 7px;border-radius:12px;background:var(--surface2);color:var(--muted);margin:2px 2px 0 0}
+.tag.warn{background:rgba(249,115,22,.15);color:var(--orange)}
+.tag.risk{background:rgba(239,68,68,.14);color:var(--red)}
+.internal{border:1px dashed var(--red)}
+.lockmsg{text-align:center;color:var(--muted);padding:14px;font-size:13px}
+.btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.btn.acc{background:var(--accent);color:#111827;border-color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input.f{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:7px 9px;font-size:13px}
+.note{font-size:11.5px;color:var(--muted);margin-top:6px}
+.prov{color:var(--orange);font-weight:600}
+.savepill{position:fixed;right:12px;bottom:12px;font-size:11px;padding:6px 11px;border-radius:20px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);z-index:50}
+.toggle{margin-left:auto;font-size:11.5px}
+@media(max-width:430px){.kpis{grid-template-columns:1fr 1fr}.gt-row{grid-template-columns:110px 1fr}}
+@media print{
+  body{background:#fff;color:#000;font-size:12px}
+  .savepill,.btn,.no-print,.pct-in{display:none!important}
+  .card,.kpi,header.mast{border:1px solid #ccc;background:#fff;color:#000;break-inside:avoid}
+  .kpi .val{color:#000!important}.badge{color:#000;border-color:#999}
+  .gt-track,.bar-wrap,.gt-bar{background:#eee!important}
+  @page{size:A4 portrait;margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <div class="logo">DGC</div>
+    <div>
+      <h1 id="jobName">Utmost KEBH — Podium Car Park Waterproofing</h1>
+      <div class="sub" id="jobSub">King Edward Bay House, Onchan · Phase 1 of 3</div>
+    </div>
+    <div class="badge" id="statusBadge">AWARDED</div>
+  </header>
+
+  <div class="row no-print" style="margin-bottom:12px">
+    <button class="btn" id="viewToggle">View: Internal</button>
+    <span class="toggle meta" id="viewNote"></span>
+  </div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="card">
+    <h2><span class="em">📅</span> Programme (Gantt) <span class="meta toggle" id="startCtl"></span></h2>
+    <div class="gantt" id="gantt"></div>
+    <div class="note">Programme Rev A. Bars scale to the working timeline; green = complete. <span class="prov" id="startProv"></span></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="em">📶</span> Progress by phase</h2>
+    <div id="phases"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="em">💷</span> Payment schedule</h2>
+    <table id="payTbl"></table>
+    <div class="note" id="payNote"></div>
+  </div>
+
+  <div class="card">
+    <h2><span class="em">🔒</span> Retention (tapered) <span class="tag warn">provisional</span></h2>
+    <table id="retTbl"></table>
+    <div class="note">Tapered retention steps down as the works prove out. Values provisional until the JCT MWD 2024 contract is signed.</div>
+  </div>
+
+  <!-- INTERNAL ONLY -->
+  <div class="card internal" id="internalCard">
+    <h2><span class="em">🧮</span> Internal — pricing, margin, suppliers, risks <button class="btn no-print" id="lockBtn" style="margin-left:auto">Unlock</button></h2>
+    <div id="internalBody"><div class="lockmsg">Locked. Tap Unlock and enter the passcode to view internal figures.</div></div>
+  </div>
+
+  <div class="note no-print" style="text-align:center;margin:18px 0">DGC Ltd · part of Silverdale Group · UTM control panel · <span id="sync2"></span></div>
+</div>
+<div class="savepill" id="savepill">offline</div>
+
+<script>
+const SUPA_URL="https://otayyqcbhnavmhdqimda.supabase.co";
+const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90YXl5cWNiaG5hdm1oZHFpbWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjAzMjUsImV4cCI6MjA5NjEzNjMyNX0.Mkj6p1bq2wN5ItCFkx_KayqY3lu6PmASLm8tDVZ9IrY";
+const REF="UTM";
+const PASSCODE="dgc-utm"; // CHANGE THIS. Client-side only, obscurity not security.
+
+// ---------- CLIENT-SAFE STATE (synced to Supabase) ----------
+const defClient={
+  name:"Utmost KEBH — Podium Car Park Waterproofing & Planter Removal",
+  site:"King Edward Bay House, King Edward Road, Onchan, IM99 1NU",
+  client:"Utmost International Isle of Man",
+  contractValue:399692.76,
+  status:"Awarded — contract to be signed",
+  startDate:"2026-07-31",          // provisional (Rev A doc = 2026-08-31)
+  baseStart:"2026-08-31", baseEnd:"2026-12-08",
+  // phases: baseline (31 Aug) dates; app shifts by chosen start
+  phases:[
+    {k:"contract",n:"Contract issue + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
+    {k:"design",n:"Designer prepares & issues design",s:"2026-09-07",e:"2026-09-18",pct:0},
+    {k:"setup",n:"Site set-up",s:"2026-09-21",e:"2026-09-23",pct:0},
+    {k:"planters",n:"Demolish 3 planters",s:"2026-09-23",e:"2026-10-07",pct:0},
+    {k:"deckA",n:"Deck Area A (uplift, DPM, repave, lining)",s:"2026-09-23",e:"2026-11-11",pct:0},
+    {k:"deckB",n:"Deck Area B (uplift, DPM, repave, lining)",s:"2026-10-07",e:"2026-11-25",pct:0},
+    {k:"snag",n:"Snagging",s:"2026-11-25",e:"2026-12-01",pct:0},
+    {k:"handover",n:"Decommission + handover (O&M)",s:"2026-12-01",e:"2026-12-08",pct:0}
+  ],
+  afps:[
+    {n:"AFP 1",date:"2026-10-30",certified:76877.92,retention:7687.79,net:69190.13,applied:false},
+    {n:"AFP 2",date:"2026-11-27",certified:143100.69,retention:14310.07,net:128790.62,applied:false},
+    {n:"AFP 3",date:"2026-12-24",certified:129771.85,retention:12977.19,net:116794.67,applied:false},
+    {n:"AFP 4",date:"2027-01-22",certified:49942.30,retention:4994.23,net:44948.07,applied:false}
+  ],
+  // tapered retention release (provisional)
+  retention:[
+    {n:"Held during works",when:"Through works",pct:10,amount:39969.28,released:false},
+    {n:"Step down at practical completion",when:"~08 Dec 2026",pct:5,amount:19984.64,released:false},
+    {n:"Step down at +6 months",when:"~Jun 2027",pct:2.5,amount:9992.32,released:false},
+    {n:"Final release end of DLP",when:"~Dec 2027",pct:0,amount:9992.32,released:false}
+  ]
+};
+// ---------- INTERNAL STATE (localStorage on-device ONLY, never synced) ----------
+const defInternal={
+  boq:[
+    {s:"Disposal installations (gully PS)",v:2500.00},
+    {s:"Roads, paths, pavings & surfacings",v:361280.12},
+    {s:"Main contractor's cost items (prelims)",v:31237.64},
+    {s:"Consultants' fees (Structura SE drainage design)",v:4675.00}
+  ],
+  ohp:10,
+  costExVat:363356, profit:36337, marginPct:9.09,
+  suppliers:[
+    {n:"CETCO / Kestrel",r:"Waterproofing membrane (Hydrofix 600 + Aquadrain) ~£229k value; DGC pays upfront — credit facility being sought"},
+    {n:"Structura (Greg Kerwick)",r:"SE drainage design, 10-yr PI (Contractor's Designed Portion)"},
+    {n:"EPR Contracts (Eugene Reynolds)",r:"DROPPED — was the Sika applicator; Sika warranty excluded finishes"}
+  ],
+  gang:"~4 operatives + supervision",
+  variations:[],
+  risks:[
+    {t:"CDM notification",n:"14-week programme + demolition likely notifiable to HSWI — confirm with Pegasus"},
+    {t:"Cash trough",n:"CETCO materials ~£229k paid upfront, recovered over AFP1-3 in arrears — Kestrel credit facility"},
+    {t:"Completion date",n:"Rev A completes 08 Dec, past the original 30 Nov requirement — set contract completion to 08 Dec"},
+    {t:"Retention",n:"Tapered structure still to agree vs Utmost's 10%/12mo+5% interest"},
+    {t:"Start date",n:"Working start 31 Jul provisional; Rev A programme doc says 31 Aug"}
+  ]
+};
+
+let S=JSON.parse(JSON.stringify(defClient));
+let I=JSON.parse(JSON.stringify(defInternal));
+let unlocked=false, saveTimer=null;
+const isClient = new URLSearchParams(location.search).get('view')==='client';
+const $=id=>document.getElementById(id);
+const gbp=n=>'£'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+const gbp0=n=>'£'+Math.round(Number(n)).toLocaleString('en-GB');
+const d=s=>new Date(s+'T00:00:00');
+const fmt=dt=>dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
+const dayMs=86400000;
+
+function shift(iso){ // shift a baseline date by (chosenStart - baseStart)
+  const delta=Math.round((d(S.startDate)-d(S.baseStart))/dayMs);
+  return new Date(d(iso).getTime()+delta*dayMs);
+}
+function overallPct(){let a=0,b=0;S.phases.forEach(p=>{a+=Number(p.pct);b++});return b?Math.round(a/b):0;}
+function nextPayment(){const a=S.afps.find(x=>!x.applied);return a?a:null;}
+function daysToDone(){const end=shift(S.baseEnd);return Math.max(0,Math.round((end-new Date())/dayMs));}
+
+function renderKPIs(){
+  const np=nextPayment();
+  $('kpis').innerHTML=`
+    <div class="kpi acc"><div class="lab">Contract value</div><div class="val">${gbp0(S.contractValue)}<small> ex VAT</small></div></div>
+    <div class="kpi"><div class="lab">Progress</div><div class="val">${overallPct()}%</div><div class="bar-wrap"><div class="bar" style="width:${overallPct()}%"></div></div></div>
+    <div class="kpi"><div class="lab">Next payment</div><div class="val">${np?gbp0(np.net):'—'}</div><div class="meta">${np?np.n+' · '+fmt(shift0(np.date)):'all applied'}</div></div>
+    <div class="kpi"><div class="lab">Days to completion</div><div class="val">${daysToDone()}</div><div class="meta">PC ${fmt(shift(S.baseEnd))}</div></div>`;
+}
+function shift0(iso){const delta=Math.round((d(S.startDate)-d(S.baseStart))/dayMs);return new Date(d(iso).getTime()+delta*dayMs);}
+
+function renderGantt(){
+  const start=shift(S.baseStart), end=shift(S.baseEnd);
+  const span=Math.max(1,(end-start)/dayMs);
+  $('gantt').innerHTML=S.phases.map(p=>{
+    const ps=shift(p.s), pe=shift(p.e);
+    const left=Math.max(0,(ps-start)/dayMs/span*100);
+    const w=Math.max(2,(pe-ps)/dayMs/span*100);
+    return `<div class="gt-row"><div class="gt-name">${p.n}<div class="d">${fmt(ps)} – ${fmt(pe)}</div></div>
+      <div class="gt-track"><div class="gt-bar" style="left:${left}%;width:${w}%"><div class="fill" style="width:${p.pct}%"></div><span>${p.pct}%</span></div></div></div>`;
+  }).join('');
+  $('startCtl').innerHTML = isClient? '' :
+    `start <input class="f" style="width:135px" type="date" id="startInput" value="${S.startDate}">`;
+  $('startProv').textContent = S.startDate!==S.baseStart? 'Working start '+fmt(d(S.startDate))+' (provisional; Rev A doc baseline '+fmt(d(S.baseStart))+').':'';
+  if(!isClient){const si=$('startInput'); if(si) si.onchange=e=>{S.startDate=e.target.value;renderAll();queueSave();};}
+}
+function renderPhases(){
+  $('phases').innerHTML=S.phases.map((p,i)=>`
+    <div class="phase"><div class="top"><span>${p.n}</span>
+      ${isClient?`<span>${p.pct}%</span>`:`<span><input class="pct-in" type="number" min="0" max="100" value="${p.pct}" data-i="${i}"> %</span>`}</div>
+      <div class="dt">${fmt(shift(p.s))} – ${fmt(shift(p.e))}</div>
+      <div class="bar-wrap"><div class="bar" style="width:${p.pct}%"></div></div></div>`).join('');
+  if(!isClient) document.querySelectorAll('.pct-in').forEach(el=>el.onchange=e=>{
+    let v=Math.max(0,Math.min(100,+e.target.value||0));S.phases[+e.target.dataset.i].pct=v;renderKPIs();renderPhases();renderGantt();queueSave();});
+}
+function renderPay(){
+  let rows=S.afps.map((a,i)=>`<tr><td>${a.n}<div class="meta">${fmt(shift0(a.date))}</div></td>
+    <td>${gbp(a.certified)}</td><td>${gbp(a.retention)}</td><td class="${a.applied?'paid':'due'}">${gbp(a.net)}</td>
+    <td>${isClient?(a.applied?'Applied':'Due'):`<input type="checkbox" ${a.applied?'checked':''} data-a="${i}">`}</td></tr>`).join('');
+  $('payTbl').innerHTML=`<thead><tr><th>Application</th><th>Certified</th><th>Retention 10%</th><th>Net payable</th><th>Status</th></tr></thead>
+    <tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${gbp(399692.76)}</td><td>${gbp(39969.28)}</td><td>${gbp(359723.49)}</td><td></td></tr></tfoot>`;
+  $('payNote').innerHTML='28-day AFP cycle, paid 14 days after each application. 10% retention held during works, released per the tapered schedule below. <span class="prov">Application dates provisional — anchored to the programme start.</span>';
+  if(!isClient) document.querySelectorAll('#payTbl input[type=checkbox]').forEach(el=>el.onchange=e=>{S.afps[+e.target.dataset.a].applied=e.target.checked;renderKPIs();renderPay();queueSave();});
+}
+function renderRet(){
+  $('retTbl').innerHTML=`<thead><tr><th>Stage</th><th>When</th><th>Held now</th><th>Amount</th><th></th></tr></thead><tbody>`+
+    S.retention.map((r,i)=>`<tr><td>${r.n}</td><td class="meta">${r.when}</td><td>${r.pct}%</td><td>${gbp(r.amount)}</td>
+      <td class="${r.released?'paid':''}">${isClient?(r.released?'Released':'Held'):`<input type="checkbox" ${r.released?'checked':''} data-r="${i}">`}</td></tr>`).join('')+`</tbody>`;
+  if(!isClient) document.querySelectorAll('#retTbl input[type=checkbox]').forEach(el=>el.onchange=e=>{S.retention[+e.target.dataset.r].released=e.target.checked;queueSave();});
+}
+function renderInternal(){
+  const card=$('internalCard');
+  if(isClient){card.style.display='none';return;}
+  if(!unlocked){$('internalBody').innerHTML='<div class="lockmsg">Locked. Tap Unlock and enter the passcode to view internal figures.</div>';return;}
+  $('internalBody').innerHTML=`
+    <table><thead><tr><th>Bill section (Option F)</th><th>Value</th></tr></thead><tbody>
+      ${I.boq.map(b=>`<tr><td>${b.s}</td><td>${gbp(b.v)}</td></tr>`).join('')}
+    </tbody><tfoot><tr><td>Contract total</td><td>${gbp(399692.76)}</td></tr></tfoot></table>
+    <div class="row" style="margin-top:10px">
+      <span class="tag">OH&P ${I.ohp}%</span><span class="tag">Est. cost ${gbp0(I.costExVat)}</span>
+      <span class="tag">Profit ~${gbp0(I.profit)}</span><span class="tag">Margin ~${I.marginPct}%</span><span class="tag">Gang ${I.gang}</span></div>
+    <h2 style="margin-top:14px;font-size:13px">Suppliers / sub</h2>
+    ${I.suppliers.map(s=>`<div class="meta" style="margin:4px 0"><b>${s.n}</b> — ${s.r}</div>`).join('')}
+    <h2 style="margin-top:12px;font-size:13px">Risks / to-confirm</h2>
+    ${I.risks.map(r=>`<div style="margin:5px 0"><span class="tag risk">${r.t}</span> <span class="meta">${r.n}</span></div>`).join('')}
+    <div class="note">⚠️ Cost/margin/supplier data is held on this device only (localStorage) and is NOT synced to the cloud. This page lives on a public host — treat the passcode as obscurity, not security.</div>`;
+}
+function renderAll(){renderKPIs();renderGantt();renderPhases();renderPay();renderRet();renderInternal();
+  document.title=(isClient?'Utmost KEBH — Progress & Payments':'DGC — Utmost KEBH | Control Panel');
+  $('statusBadge').textContent=isClient?'IN PROGRESS':'AWARDED';
+  $('viewToggle').textContent='View: '+(isClient?'Client':'Internal');
+  $('viewNote').textContent=isClient?'client-safe: no cost, rates or suppliers shown':'full internal view';
+  if(isClient){$('viewToggle').textContent='Open client report';$('viewToggle').onclick=()=>window.print();}
+}
+
+// ---------- persistence ----------
+function saveLocal(){try{localStorage.setItem('utm_client',JSON.stringify(S));localStorage.setItem('utm_internal',JSON.stringify(I));}catch(e){}}
+function loadLocal(){try{const c=localStorage.getItem('utm_client');if(c)S=Object.assign(S,JSON.parse(c));const i=localStorage.getItem('utm_internal');if(i)I=Object.assign(I,JSON.parse(i));}catch(e){}}
+async function loadCloud(){
+  try{const r=await fetch(`${SUPA_URL}/rest/v1/job_state?project_ref=eq.${REF}&select=data`,{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}});
+    const j=await r.json(); if(Array.isArray(j)&&j[0]&&j[0].data){S=Object.assign(JSON.parse(JSON.stringify(defClient)),j[0].data);pill('synced');}else{pill('new');}
+  }catch(e){pill('offline');}
+}
+async function saveCloud(){
+  saveLocal();
+  try{const r=await fetch(`${SUPA_URL}/rest/v1/job_state?on_conflict=project_ref`,{method:'POST',
+    headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify({project_ref:REF,data:S,updated_at:new Date().toISOString()})});
+    pill(r.ok?'saved':'save err '+r.status);}catch(e){pill('offline');}
+}
+function queueSave(){saveLocal();pill('saving…');clearTimeout(saveTimer);saveTimer=setTimeout(saveCloud,1000);}
+function pill(t){$('savepill').textContent=t;$('sync2').textContent=t;}
+
+$('viewToggle').onclick=()=>{location.search=isClient?'':'?view=client';};
+$('lockBtn').onclick=()=>{ if(unlocked){unlocked=false;renderInternal();return;} const p=prompt('Passcode for internal figures:'); if(p===PASSCODE){unlocked=true;renderInternal();}else if(p!==null){alert('Wrong passcode.');}};
+
+loadLocal();
+renderAll();
+loadCloud().then(renderAll);
+</script>
+</body>
+</html>
