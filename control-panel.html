@@ -1459,6 +1459,12 @@ main{max-width:1040px;margin:0 auto;padding:16px}
 .tpl{border:1px dashed var(--accent);border-radius:10px;padding:14px;background:rgba(245,158,11,.05);text-align:center;color:var(--muted);font-size:12.5px}
 body.client-mode .internal-tab,body.client-mode #cvBtn,body.client-mode .int-only{display:none!important}
 .savechip{position:fixed;right:12px;bottom:12px;font-size:11px;padding:6px 11px;border-radius:20px;background:#1a1d27;color:#94a3b8;border:1px solid #2e3347;z-index:200}
+#gate{position:fixed;inset:0;background:#0f172a;display:none;align-items:center;justify-content:center;z-index:999}
+#gate .gbox{background:#1a1d27;border:1px solid #2e3347;border-radius:14px;padding:26px;width:280px;text-align:center;color:#e2e8f0}
+#gate input{width:100%;margin:7px 0;padding:10px;border-radius:8px;border:1px solid #2e3347;background:#0f172a;color:#e2e8f0;font-size:14px;box-sizing:border-box}
+#gate button{width:100%;padding:10px;border:0;border-radius:8px;background:#f59e0b;color:#111827;font-weight:700;cursor:pointer;margin-top:6px}
+#gate .gerr{color:#f87171;font-size:12px;min-height:16px;margin-top:4px}
+body.locked{overflow:hidden}
 /* dated gantt */
 .gx-wrap{overflow-x:auto}
 .gx{position:relative;min-width:820px}
@@ -1593,11 +1599,23 @@ body.client-mode .internal-tab,body.client-mode #cvBtn,body.client-mode .int-onl
 </main>
 <div class="savechip" id="savechip">offline</div>
 
+<div id="gate">
+  <div class="gbox">
+    <div class="logo" style="justify-content:center;margin-bottom:6px">DGC<span> Control</span></div>
+    <div style="font-size:12px;color:#94a3b8;margin-bottom:10px">Utmost KEBH — internal access</div>
+    <input id="gu" placeholder="User" autocomplete="username">
+    <input id="gp" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <button onclick="doLogin()">Enter</button>
+    <div class="gerr" id="gerr"></div>
+    <div style="font-size:11px;color:#64748b;margin-top:8px">Opened from the DGC Hub? You're let straight in.</div>
+  </div>
+</div>
+
 <script>
 const SUPA_URL="https://otayyqcbhnavmhdqimda.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90YXl5cWNiaG5hdm1oZHFpbWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjAzMjUsImV4cCI6MjA5NjEzNjMyNX0.Mkj6p1bq2wN5ItCFkx_KayqY3lu6PmASLm8tDVZ9IrY";
 const REF="UTM";
-const defClient={contractValue:399692.76,startDate:"2026-07-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
+const defClient={contractValue:399692.76,startDate:"2026-08-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
  photoNotes:"",specNotes:"",dwgNotes:"",
  phases:[{n:"Contract issue + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
   {n:"Designer prepares & issues design",s:"2026-09-07",e:"2026-09-18",pct:0},
@@ -1639,6 +1657,13 @@ function plannedPctAt(date){let a=0;S.phases.forEach(p=>{const s=shift(p.s),e=sh
 const dtd=()=>Math.max(0,Math.round((shift(S.baseEnd)-new Date())/dMs));
 const nextAfp=()=>S.afps.find(a=>!a.applied);
 
+// ---- access gate: hub login (same origin) grants full access; admin/1612 fallback for direct opens; client view is open ----
+function authed(){return localStorage.getItem('dgc_hub_auth')==='1'||localStorage.getItem('dgc_panel_auth')==='1';}
+function gate(lock){$('gate').style.display=lock?'flex':'none';document.body.classList.toggle('locked',lock);}
+function doLogin(){const u=($('gu').value||'').trim().toLowerCase(),p=($('gp').value||'').trim();if(u==='admin'&&p==='1612'){localStorage.setItem('dgc_panel_auth','1');gate(false);}else{$('gerr').textContent='Wrong user or password.';}}
+window.doLogin=doLogin;
+(function(){const q=new URLSearchParams(location.search);if(q.get('hub')==='1')localStorage.setItem('dgc_hub_auth','1');gate(!(isClient||authed()));})();
+
 function showTab(n,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));$('tab-'+n).classList.add('active');if(btn)btn.classList.add('active');if(n==='prog')buildGantt();}
 window.showTab=showTab;
 function toggleClient(){location.search=isClient?'':'?view=client';}
@@ -1653,7 +1678,7 @@ function render(){
     (act===0&&plan===0?`Job not started yet — tracking begins on site.`:
      `<span class="${v>=0?'varpos':'varneg'}">${v>=0?'▲ Ahead':'▼ Behind'} by ${Math.abs(v)}%</span> (${gbp0(Math.abs(ev-pv))} of work). Performance index ${(pv?ev/pv:1).toFixed(2)} (1.00 = on plan).`);
   $('heroPct').textContent=act+'%';$('heroStart').textContent=fmt(shift(S.baseStart));$('heroEnd').textContent=fmt(shift(S.baseEnd));
-  $('heroDeadline').textContent=dtd()+' days to practical completion · '+(S.startDate!==S.baseStart?'start provisional (Rev A doc '+fmt(dd(S.baseStart))+')':'per Rev A programme');
+  $('heroDeadline').textContent=dtd()+' days to practical completion · '+(S.startDate!==S.baseStart?'start moved from Rev A '+fmt(dd(S.baseStart)):'agreed start 31 Aug · Rev A programme');
   if($('startInput')){$('startInput').value=S.startDate;$('startInput').onchange=e=>{S.startDate=e.target.value;render();buildGantt();queue();};}
   $('phaseCards').innerHTML=S.phases.map((p,i)=>{const st=+p.pct>=100?'complete':+p.pct>0?'active':'upcoming';const col=st==='complete'?'#16a34a':st==='active'?'#d97706':'#94a3b8';
     return `<div class="pv5-section-card"><div class="pv5-section-pct pv5-${st}">${p.pct}%</div><div class="pv5-section-name">${p.n}</div><div class="pv5-section-sub">${fmt(shift(p.s))} – ${fmt(shift(p.e))}</div><div class="pv5-section-bar"><div class="pv5-section-bar-fill" style="width:${p.pct}%;background:${col}"></div></div>${isClient?'':`<div class="no-print" style="margin-top:8px">% <input class="ph-input" style="width:60px;text-align:right" type="number" min="0" max="100" value="${p.pct}" data-i="${i}"></div>`}</div>`}).join('');
