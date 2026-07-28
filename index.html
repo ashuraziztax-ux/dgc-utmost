@@ -49,6 +49,19 @@ th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}tf
   </header>
   <div class="no-print" style="text-align:right;margin-bottom:10px"><button class="btn" onclick="window.print()">🖨 Save as PDF</button></div>
   <div class="kpis" id="kpis"></div>
+  <div class="card">
+    <h2>ℹ️ About this job — in plain English</h2>
+    <div style="font-size:13.5px;line-height:1.7">
+      This building's <b>car park sits on top of a concrete deck</b> — like a giant flat roof you park cars on. The hidden waterproof layer under the surface has worn out, letting rainwater soak into the structure. We're <b>stripping the deck back, fitting a brand-new waterproof "skin", and putting the surface back exactly as it was</b> — so it looks the same, but is sealed and protected for decades.
+      <br><br>
+      <b>How the waterproofing works:</b> we bond down a <b>CETCO Hydrofix 600</b> membrane — a tough, rubbery waterproof blanket laid in <b>two overlapping layers</b> so there's no gap for water anywhere — then a thin drainage mat carries surface water away to the drains, and the paving goes back on top.
+      <br><br>
+      <b>The size of it:</b> about <b>1,480 m²</b> of deck (≈ 6 tennis courts), around <b>74,000 paving blocks</b> lifted and re-laid by hand, and <b>3</b> brick planters removed — worked in small bays so as much of the car park stays usable as possible.
+    </div>
+    <div style="margin-top:12px;font-size:12.5px;line-height:1.7">
+      <b>Step by step:</b> 1) Paperwork &amp; design · 2) Set up site (fencing, welfare, protection) · 3) Remove the 3 planters · 4) Lift the old paving &amp; strip the worn-out waterproofing · 5) Lay the new waterproof skin · 6) Re-lay paving &amp; repaint the bay lines · 7) Snagging with the client · 8) Clean up &amp; handover.
+    </div>
+  </div>
   <div class="card"><h2>📅 Programme</h2><div class="gantt" id="gantt"></div></div>
   <div class="card"><h2>📶 Progress by phase</h2><div id="phases"></div></div>
   <div class="card"><h2>💷 Payments</h2><table id="payTbl"></table><div class="meta" id="payNote" style="margin-top:6px"></div></div>
@@ -58,17 +71,17 @@ th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}tf
 const SUPA_URL="https://otayyqcbhnavmhdqimda.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90YXl5cWNiaG5hdm1oZHFpbWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjAzMjUsImV4cCI6MjA5NjEzNjMyNX0.Mkj6p1bq2wN5ItCFkx_KayqY3lu6PmASLm8tDVZ9IrY";
 // client-safe defaults (same shape as the synced blob)
-let S={contractValue:399692.76,startDate:"2026-08-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
- phases:[{n:"Contract issue + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
-  {n:"Designer prepares & issues design",s:"2026-09-07",e:"2026-09-18",pct:0},
-  {n:"Site set-up",s:"2026-09-21",e:"2026-09-23",pct:0},
-  {n:"Demolish 3 planters",s:"2026-09-23",e:"2026-10-07",pct:0},
-  {n:"Deck Area A",s:"2026-09-23",e:"2026-11-11",pct:0},
-  {n:"Deck Area B",s:"2026-10-07",e:"2026-11-25",pct:0},
-  {n:"Snagging",s:"2026-11-25",e:"2026-12-01",pct:0},
-  {n:"Decommission + handover",s:"2026-12-01",e:"2026-12-08",pct:0}],
- afps:[{n:"AFP 1",date:"2026-10-30",net:69190.13,applied:false},{n:"AFP 2",date:"2026-11-27",net:128790.62,applied:false},
-  {n:"AFP 3",date:"2026-12-24",net:116794.67,applied:false},{n:"AFP 4",date:"2027-01-22",net:44948.07,applied:false}]};
+let S={contractValue:399692.76,startDate:"2026-07-29",baseStart:"2026-07-29",baseEnd:"2026-11-05",
+ phases:[{n:"Paperwork + appoint designer",s:"2026-07-29",e:"2026-08-04",pct:0},
+  {n:"Designer prepares & issues design",s:"2026-08-05",e:"2026-08-18",pct:0},
+  {n:"Site set-up",s:"2026-08-19",e:"2026-08-21",pct:0},
+  {n:"Demolish 3 planters",s:"2026-08-21",e:"2026-09-04",pct:0},
+  {n:"Deck Area A",s:"2026-08-21",e:"2026-10-09",pct:0},
+  {n:"Deck Area B",s:"2026-09-04",e:"2026-10-23",pct:0},
+  {n:"Snagging",s:"2026-10-23",e:"2026-10-29",pct:0},
+  {n:"Decommission + handover",s:"2026-10-29",e:"2026-11-05",pct:0}],
+ afps:[{n:"AFP 1",date:"2026-09-15",net:69190.13,applied:false},{n:"AFP 2",date:"2026-10-13",net:128790.62,applied:false},
+  {n:"AFP 3",date:"2026-11-05",net:116794.67,applied:false},{n:"AFP 4",date:"2026-12-03",net:44948.07,applied:false}]};
 const gbp0=n=>'£'+Math.round(Number(n)).toLocaleString('en-GB');
 const gbp=n=>'£'+Number(n).toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
 const dayMs=86400000,d=s=>new Date(s+'T00:00:00'),fmt=dt=>dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'});
