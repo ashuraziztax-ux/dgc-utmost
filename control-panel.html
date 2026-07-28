@@ -1495,6 +1495,7 @@ body.locked{overflow:hidden}
 </header>
 <nav class="nav">
   <button class="active" onclick="showTab('dash',this)">Dashboard</button>
+  <button onclick="showTab('overview',this)">Overview</button>
   <button onclick="showTab('prog',this)">Programme</button>
   <button onclick="showTab('pay',this)">Payments &amp; Tracking</button>
   <button onclick="showTab('site',this)">Site &amp; Docs</button>
@@ -1524,6 +1525,49 @@ body.locked{overflow:hidden}
     </div>
   </div>
 
+  <!-- OVERVIEW (shareholder-friendly) -->
+  <div class="tab-content" id="tab-overview">
+    <div class="ph-card">
+      <div class="ph-title">What this job is — in plain English</div>
+      <div style="font-size:13.5px;line-height:1.75">
+        Utmost's building at King Edward Bay House has a <b>car park that sits on top of a concrete deck</b> — think of it as a giant flat roof that people park cars on. Over the years the hidden waterproof layer under the parking surface has worn out, so rainwater can start to soak into the concrete and the areas below. Left alone, that water rusts the steel inside the concrete and cracks it — slow, expensive damage.
+        <br><br>
+        Our job is to <b>strip the deck back, give it a brand-new waterproof "skin", and put the surface back exactly as it was</b> — so the car park looks the same, but is completely sealed and protected for decades.
+      </div>
+    </div>
+
+    <div class="ph-kpi-row">
+      <div class="ph-kpi"><div class="k-val">~1,480 m²</div><div class="k-lbl">Deck area (≈ 6 tennis courts)</div></div>
+      <div class="ph-kpi"><div class="k-val">~74,000</div><div class="k-lbl">Paving blocks lifted & relaid by hand</div></div>
+      <div class="ph-kpi"><div class="k-val">3</div><div class="k-lbl">Brick planters removed</div></div>
+      <div class="ph-kpi"><div class="k-val">14</div><div class="k-lbl">Work bays (~100 m² each)</div></div>
+    </div>
+
+    <div class="ph-card">
+      <div class="ph-title">How the waterproofing actually works</div>
+      <div style="font-size:13.5px;line-height:1.75">
+        The concrete deck is really the <b>roof over the space below</b>. To stop water ever getting through, we lay a <b>CETCO Hydrofix 600</b> membrane. In simple terms it's a <b>tough, rubbery waterproof blanket</b> that bonds onto the concrete in <b>two overlapping layers</b> (belt-and-braces — so there's no gap anywhere for water to sneak through).
+        <br><br>
+        On top of that goes a thin <b>drainage mat</b> that quietly carries any surface water away to the drains, and then all the paving goes back on top. Water simply runs off and away, and the structure underneath stays bone dry. It's the same idea as a really good flat-roof, built to last.
+      </div>
+    </div>
+
+    <div class="ph-card">
+      <div class="ph-title">The job, step by step (what you'll see in the photos)</div>
+      <div style="font-size:13px;line-height:1.7">
+        <b>1. Paperwork &amp; design.</b> Sign the contract and our engineer draws up the exact plans — like drawing the map before the treasure hunt.<br>
+        <b>2. Setting up.</b> Safety fencing, a site cabin &amp; welfare, and floor protection so nothing gets damaged.<br>
+        <b>3. Remove the planters.</b> Carefully take down the 3 big brick flower-beds sitting on the deck.<br>
+        <b>4. Lift the old surface.</b> Lift ~74,000 paving blocks by hand and set them aside, then peel off the old, worn-out waterproof layer underneath.<br>
+        <b>5. Lay the new waterproof skin.</b> Roll out and bond the new membrane (the "raincoat") over the bare concrete — the most important stage.<br>
+        <b>6. Put it all back.</b> Lay the drainage mat, re-lay every block on fresh sand, and repaint the parking-bay lines.<br>
+        <b>7. Snagging.</b> Walk round with Utmost and fix every last little thing on a checklist.<br>
+        <b>8. Handover.</b> Deep clean, take the fencing away, and hand over the finished, fully waterproof car park with all the manuals.
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:10px">Worked in two halves (Deck A &amp; Deck B) and in small bays, so as much of the car park stays usable as possible while we work.</div>
+    </div>
+  </div>
+
   <!-- PROGRAMME -->
   <div class="tab-content" id="tab-prog">
     <div class="pv5-hero">
@@ -1536,7 +1580,11 @@ body.locked{overflow:hidden}
         <div style="text-align:right">
           <div class="pv5-deadline">Start <b id="heroStart" style="color:#e2e8f0"></b></div>
           <div class="pv5-deadline">Practical completion <b id="heroEnd" style="color:#e2e8f0"></b></div>
-          <div class="no-print int-only" style="margin-top:8px">Start date <input type="date" id="startInput" class="ph-input" style="width:140px"></div>
+          <div class="no-print int-only" style="margin-top:8px">Programme start <input type="date" id="startInput" class="ph-input" style="width:140px"></div>
+          <div class="no-print int-only" style="margin-top:8px">Baseline:
+            <button class="ph-badge ph-green" style="cursor:pointer" onclick="loadBaseline('plan19')">19 Aug plan</button>
+            <button class="ph-badge ph-blue" style="cursor:pointer" onclick="loadBaseline('revA')">Rev A fallback</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1617,24 +1665,40 @@ body.locked{overflow:hidden}
 const SUPA_URL="https://otayyqcbhnavmhdqimda.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90YXl5cWNiaG5hdm1oZHFpbWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjAzMjUsImV4cCI6MjA5NjEzNjMyNX0.Mkj6p1bq2wN5ItCFkx_KayqY3lu6PmASLm8tDVZ9IrY";
 const REF="UTM";
-const defClient={contractValue:399692.76,startDate:"2026-08-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
+const defClient={contractValue:399692.76,startDate:"2026-07-29",baseStart:"2026-07-29",baseEnd:"2026-11-05",baseline:"plan19",
  photoNotes:"",specNotes:"",dwgNotes:"",
- phases:[{n:"Contract issue + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
+ phases:[{n:"Paperwork + appoint designer",s:"2026-07-29",e:"2026-08-04",pct:0},
+  {n:"Designer prepares & issues design",s:"2026-08-05",e:"2026-08-18",pct:0},
+  {n:"Site set-up",s:"2026-08-19",e:"2026-08-21",pct:0},
+  {n:"Demolish 3 planters",s:"2026-08-21",e:"2026-09-04",pct:0},
+  {n:"Deck Area A — uplift, waterproof, repave, line",s:"2026-08-21",e:"2026-10-09",pct:0},
+  {n:"Deck Area B — uplift, waterproof, repave, line",s:"2026-09-04",e:"2026-10-23",pct:0},
+  {n:"Snagging",s:"2026-10-23",e:"2026-10-29",pct:0},
+  {n:"Decommission + handover (O&M)",s:"2026-10-29",e:"2026-11-05",pct:0}],
+ afps:[{n:"AFP 1",date:"2026-09-15",certified:76877.92,retention:7687.79,net:69190.13,applied:false},
+  {n:"AFP 2",date:"2026-10-13",certified:143100.69,retention:14310.07,net:128790.62,applied:false},
+  {n:"AFP 3",date:"2026-11-05",certified:129771.85,retention:12977.19,net:116794.67,applied:false},
+  {n:"AFP 4",date:"2026-12-03",certified:49942.30,retention:4994.23,net:44948.07,applied:false}],
+ retention:[{n:"Held during works",when:"Through works",pct:"10%",amount:39969.28,released:false},
+  {n:"Step down at practical completion",when:"~08 Dec 2026",pct:"5%",amount:19984.64,released:false},
+  {n:"Step down at +6 months",when:"~Jun 2027",pct:"2.5%",amount:9992.32,released:false},
+  {n:"Final release end of DLP",when:"~Dec 2027",pct:"0%",amount:9992.32,released:false}]};
+// --- Programme baselines (switchable) ---
+const PLAN19={label:"19 Aug plan (live)",startDate:"2026-07-29",baseStart:"2026-07-29",baseEnd:"2026-11-05",
+ phases:JSON.parse(JSON.stringify(defClient.phases)),afps:JSON.parse(JSON.stringify(defClient.afps))};
+const REVA={label:"Rev A (31 Aug fallback)",startDate:"2026-08-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
+ phases:[{n:"Paperwork + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
   {n:"Designer prepares & issues design",s:"2026-09-07",e:"2026-09-18",pct:0},
   {n:"Site set-up",s:"2026-09-21",e:"2026-09-23",pct:0},
   {n:"Demolish 3 planters",s:"2026-09-23",e:"2026-10-07",pct:0},
-  {n:"Deck Area A — uplift, DPM, repave, lining",s:"2026-09-23",e:"2026-11-11",pct:0},
-  {n:"Deck Area B — uplift, DPM, repave, lining",s:"2026-10-07",e:"2026-11-25",pct:0},
+  {n:"Deck Area A — uplift, waterproof, repave, line",s:"2026-09-23",e:"2026-11-11",pct:0},
+  {n:"Deck Area B — uplift, waterproof, repave, line",s:"2026-10-07",e:"2026-11-25",pct:0},
   {n:"Snagging",s:"2026-11-25",e:"2026-12-01",pct:0},
   {n:"Decommission + handover (O&M)",s:"2026-12-01",e:"2026-12-08",pct:0}],
  afps:[{n:"AFP 1",date:"2026-10-30",certified:76877.92,retention:7687.79,net:69190.13,applied:false},
   {n:"AFP 2",date:"2026-11-27",certified:143100.69,retention:14310.07,net:128790.62,applied:false},
   {n:"AFP 3",date:"2026-12-24",certified:129771.85,retention:12977.19,net:116794.67,applied:false},
-  {n:"AFP 4",date:"2027-01-22",certified:49942.30,retention:4994.23,net:44948.07,applied:false}],
- retention:[{n:"Held during works",when:"Through works",pct:"10%",amount:39969.28,released:false},
-  {n:"Step down at practical completion",when:"~08 Dec 2026",pct:"5%",amount:19984.64,released:false},
-  {n:"Step down at +6 months",when:"~Jun 2027",pct:"2.5%",amount:9992.32,released:false},
-  {n:"Final release end of DLP",when:"~Dec 2027",pct:"0%",amount:9992.32,released:false}]};
+  {n:"AFP 4",date:"2027-01-22",certified:49942.30,retention:4994.23,net:44948.07,applied:false}]};
 const defInt={boq:[["Disposal installations (gully PS)",2500.00],["Roads, paths, pavings & surfacings",361280.12],["Main contractor's cost items (prelims)",31237.64],["Consultants' fees — Structura SE drainage design",4675.00]],
  matTotal:229020, matPhasing:[0.20,0.40,0.40,0.00], profFactor:0.0909,
  ohp:10,cost:363356,profit:36337,margin:9.09,gang:"~4 operatives + supervision",
@@ -1673,6 +1737,12 @@ function toggleClient(){location.search=isClient?'':'?view=client';}
 window.toggleClient=toggleClient;
 function tglAfp(i){const r=$('afpd'+i),t=$('afpt'+i);if(!r)return;const open=r.style.display==='none';r.style.display=open?'table-row':'none';if(t)t.textContent=(open?'▾ ':'▸ ')+S.afps[i].n;}
 window.tglAfp=tglAfp;
+function loadBaseline(key){const p=key==='revA'?REVA:PLAN19;const pct={};S.phases.forEach(x=>pct[x.n]=x.pct);const ap=S.afps.map(a=>a.applied);
+ S.startDate=p.startDate;S.baseStart=p.baseStart;S.baseEnd=p.baseEnd;S.baseline=key;
+ S.phases=JSON.parse(JSON.stringify(p.phases)).map(x=>({...x,pct:pct[x.n]||0}));
+ S.afps=JSON.parse(JSON.stringify(p.afps)).map((x,i)=>({...x,applied:ap[i]||false}));
+ render();buildGantt();queue();}
+window.loadBaseline=loadBaseline;
 
 function render(){
   $('todayBadge').textContent=new Date().toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -1683,7 +1753,9 @@ function render(){
     (act===0&&plan===0?`Job not started yet — tracking begins on site.`:
      `<span class="${v>=0?'varpos':'varneg'}">${v>=0?'▲ Ahead':'▼ Behind'} by ${Math.abs(v)}%</span> (${gbp0(Math.abs(ev-pv))} of work). Performance index ${(pv?ev/pv:1).toFixed(2)} (1.00 = on plan).`);
   $('heroPct').textContent=act+'%';$('heroStart').textContent=fmt(shift(S.baseStart));$('heroEnd').textContent=fmt(shift(S.baseEnd));
-  $('heroDeadline').textContent=dtd()+' days to practical completion · '+(S.startDate!==S.baseStart?'start moved from Rev A '+fmt(dd(S.baseStart)):'agreed start 31 Aug · Rev A programme');
+  if($('progPill'))$('progPill').textContent=(S.baseline==='revA'?REVA.label:PLAN19.label);
+  const physStart=S.phases[2]?fmt(shift(S.phases[2].s)):'';
+  $('heroDeadline').textContent=dtd()+' days to practical completion · physical work starts '+physStart;
   if($('startInput')){$('startInput').value=S.startDate;$('startInput').onchange=e=>{S.startDate=e.target.value;render();buildGantt();queue();};}
   $('phaseCards').innerHTML=S.phases.map((p,i)=>{const st=+p.pct>=100?'complete':+p.pct>0?'active':'upcoming';const col=st==='complete'?'#16a34a':st==='active'?'#d97706':'#94a3b8';
     return `<div class="pv5-section-card"><div class="pv5-section-pct pv5-${st}">${p.pct}%</div><div class="pv5-section-name">${p.n}</div><div class="pv5-section-sub">${fmt(shift(p.s))} – ${fmt(shift(p.e))}</div><div class="pv5-section-bar"><div class="pv5-section-bar-fill" style="width:${p.pct}%;background:${col}"></div></div>${isClient?'':`<div class="no-print" style="margin-top:8px">% <input class="ph-input" style="width:60px;text-align:right" type="number" min="0" max="100" value="${p.pct}" data-i="${i}"></div>`}</div>`}).join('');
