@@ -1582,7 +1582,7 @@ body.locked{overflow:hidden}
           <div class="pv5-deadline">Practical completion <b id="heroEnd" style="color:#e2e8f0"></b></div>
           <div class="no-print int-only" style="margin-top:8px">Programme start <input type="date" id="startInput" class="ph-input" style="width:140px"></div>
           <div class="no-print int-only" style="margin-top:8px">Baseline:
-            <button class="ph-badge ph-green" style="cursor:pointer" onclick="loadBaseline('plan19')">19 Aug plan</button>
+            <button class="ph-badge ph-green" style="cursor:pointer" onclick="loadBaseline('revB')">Rev B (official)</button>
             <button class="ph-badge ph-blue" style="cursor:pointer" onclick="loadBaseline('revA')">Rev A fallback</button>
           </div>
         </div>
@@ -1665,26 +1665,26 @@ body.locked{overflow:hidden}
 const SUPA_URL="https://otayyqcbhnavmhdqimda.supabase.co";
 const SUPA_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im90YXl5cWNiaG5hdm1oZHFpbWRhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NjAzMjUsImV4cCI6MjA5NjEzNjMyNX0.Mkj6p1bq2wN5ItCFkx_KayqY3lu6PmASLm8tDVZ9IrY";
 const REF="UTM";
-const defClient={contractValue:399692.76,startDate:"2026-07-29",baseStart:"2026-07-29",baseEnd:"2026-11-05",baseline:"plan19",
+const defClient={contractValue:399692.76,startDate:"2026-07-31",baseStart:"2026-07-31",baseEnd:"2026-11-09",baseline:"revB",
  photoNotes:"",specNotes:"",dwgNotes:"",
- phases:[{n:"Paperwork + appoint designer",s:"2026-07-29",e:"2026-08-04",pct:0},
-  {n:"Designer prepares & issues design",s:"2026-08-05",e:"2026-08-18",pct:0},
-  {n:"Site set-up",s:"2026-08-19",e:"2026-08-21",pct:0},
-  {n:"Demolish 3 planters",s:"2026-08-21",e:"2026-09-04",pct:0},
-  {n:"Deck Area A — uplift, waterproof, repave, line",s:"2026-08-21",e:"2026-10-09",pct:0},
-  {n:"Deck Area B — uplift, waterproof, repave, line",s:"2026-09-04",e:"2026-10-23",pct:0},
-  {n:"Snagging",s:"2026-10-23",e:"2026-10-29",pct:0},
-  {n:"Decommission + handover (O&M)",s:"2026-10-29",e:"2026-11-05",pct:0}],
- afps:[{n:"AFP 1",date:"2026-09-15",certified:76877.92,retention:7687.79,net:69190.13,applied:false},
-  {n:"AFP 2",date:"2026-10-13",certified:143100.69,retention:14310.07,net:128790.62,applied:false},
-  {n:"AFP 3",date:"2026-11-05",certified:129771.85,retention:12977.19,net:116794.67,applied:false},
-  {n:"AFP 4",date:"2026-12-03",certified:49942.30,retention:4994.23,net:44948.07,applied:false}],
+ phases:[{n:"Paperwork + appoint designer",s:"2026-07-31",e:"2026-08-06",pct:0},
+  {n:"Designer prepares & issues design",s:"2026-08-07",e:"2026-08-20",pct:0},
+  {n:"Site set-up",s:"2026-08-21",e:"2026-08-25",pct:0},
+  {n:"Demolish 3 planters",s:"2026-08-25",e:"2026-09-08",pct:0},
+  {n:"Deck Area A — uplift, waterproof, repave, line",s:"2026-08-25",e:"2026-10-13",pct:0},
+  {n:"Deck Area B — uplift, waterproof, repave, line",s:"2026-09-08",e:"2026-10-27",pct:0},
+  {n:"Snagging",s:"2026-10-27",e:"2026-11-02",pct:0},
+  {n:"Decommission + handover (O&M)",s:"2026-11-02",e:"2026-11-09",pct:0}],
+ afps:[{n:"AFP 1",date:"2026-08-28",certified:76877.92,retention:7687.79,net:69190.13,applied:false},
+  {n:"AFP 2",date:"2026-09-25",certified:143100.69,retention:14310.07,net:128790.62,applied:false},
+  {n:"AFP 3",date:"2026-10-23",certified:129771.85,retention:12977.19,net:116794.67,applied:false},
+  {n:"AFP 4",date:"2026-11-20",certified:49942.30,retention:4994.23,net:44948.07,applied:false}],
  retention:[{n:"Held during works",when:"Through works",pct:"10%",amount:39969.28,released:false},
   {n:"Step down at practical completion",when:"~08 Dec 2026",pct:"5%",amount:19984.64,released:false},
   {n:"Step down at +6 months",when:"~Jun 2027",pct:"2.5%",amount:9992.32,released:false},
   {n:"Final release end of DLP",when:"~Dec 2027",pct:"0%",amount:9992.32,released:false}]};
 // --- Programme baselines (switchable) ---
-const PLAN19={label:"19 Aug plan (live)",startDate:"2026-07-29",baseStart:"2026-07-29",baseEnd:"2026-11-05",
+const REVB={label:"Rev B (official — live)",startDate:"2026-07-31",baseStart:"2026-07-31",baseEnd:"2026-11-09",
  phases:JSON.parse(JSON.stringify(defClient.phases)),afps:JSON.parse(JSON.stringify(defClient.afps))};
 const REVA={label:"Rev A (31 Aug fallback)",startDate:"2026-08-31",baseStart:"2026-08-31",baseEnd:"2026-12-08",
  phases:[{n:"Paperwork + appoint designer",s:"2026-08-31",e:"2026-09-04",pct:0},
@@ -1737,7 +1737,7 @@ function toggleClient(){location.search=isClient?'':'?view=client';}
 window.toggleClient=toggleClient;
 function tglAfp(i){const r=$('afpd'+i),t=$('afpt'+i);if(!r)return;const open=r.style.display==='none';r.style.display=open?'table-row':'none';if(t)t.textContent=(open?'▾ ':'▸ ')+S.afps[i].n;}
 window.tglAfp=tglAfp;
-function loadBaseline(key){const p=key==='revA'?REVA:PLAN19;const pct={};S.phases.forEach(x=>pct[x.n]=x.pct);const ap=S.afps.map(a=>a.applied);
+function loadBaseline(key){const p=key==='revA'?REVA:REVB;const pct={};S.phases.forEach(x=>pct[x.n]=x.pct);const ap=S.afps.map(a=>a.applied);
  S.startDate=p.startDate;S.baseStart=p.baseStart;S.baseEnd=p.baseEnd;S.baseline=key;
  S.phases=JSON.parse(JSON.stringify(p.phases)).map(x=>({...x,pct:pct[x.n]||0}));
  S.afps=JSON.parse(JSON.stringify(p.afps)).map((x,i)=>({...x,applied:ap[i]||false}));
@@ -1753,7 +1753,7 @@ function render(){
     (act===0&&plan===0?`Job not started yet — tracking begins on site.`:
      `<span class="${v>=0?'varpos':'varneg'}">${v>=0?'▲ Ahead':'▼ Behind'} by ${Math.abs(v)}%</span> (${gbp0(Math.abs(ev-pv))} of work). Performance index ${(pv?ev/pv:1).toFixed(2)} (1.00 = on plan).`);
   $('heroPct').textContent=act+'%';$('heroStart').textContent=fmt(shift(S.baseStart));$('heroEnd').textContent=fmt(shift(S.baseEnd));
-  if($('progPill'))$('progPill').textContent=(S.baseline==='revA'?REVA.label:PLAN19.label);
+  if($('progPill'))$('progPill').textContent=(S.baseline==='revA'?REVA.label:REVB.label);
   const physStart=S.phases[2]?fmt(shift(S.phases[2].s)):'';
   $('heroDeadline').textContent=dtd()+' days to practical completion · physical work starts '+physStart;
   if($('startInput')){$('startInput').value=S.startDate;$('startInput').onchange=e=>{S.startDate=e.target.value;render();buildGantt();queue();};}
